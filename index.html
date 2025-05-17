@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>Wi-Fi速度テスト</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; max-width: 400px; margin: auto; }
+  button { padding: 10px 20px; margin: 10px 0; }
+  #result { margin-top: 20px; }
+</style>
+</head>
+<body>
+<h2>Wi-Fi速度テスト</h2>
+<button id="downloadTest">ダウンロード速度測定</button>
+<button id="pingTest">Ping測定（簡易）</button>
+<div id="result"></div>
+
+<script>
+const testFileUrl = 'testfile.bin';
+
+document.getElementById('downloadTest').onclick = () => {
+  const start = performance.now();
+  fetch(testFileUrl).then(res => res.blob()).then(blob => {
+    const end = performance.now();
+    const time = (end - start) / 1000;
+    const speedMbps = (blob.size * 8 / time) / 1_000_000;
+    document.getElementById('result').innerText = `ダウンロード速度: ${speedMbps.toFixed(2)} Mbps`;
+  }).catch(e => {
+    document.getElementById('result').innerText = 'エラーが発生しました: ' + e;
+  });
+};
+
+document.getElementById('pingTest').onclick = async () => {
+  const url = 'https://www.google.com/favicon.ico'; // 軽いファイル
+  const times = [];
+  for(let i=0; i<5; i++){
+    const start = performance.now();
+    try{
+      await fetch(url, {cache: 'no-store'});
+      const end = performance.now();
+      times.push(end - start);
+    }catch(e){
+      document.getElementById('result').innerText = 'Pingエラー: ' + e;
+      return;
+    }
+  }
+  const avg = times.reduce((a,b)=>a+b,0)/times.length;
+  document.getElementById('result').innerText = `平均Ping応答時間: ${avg.toFixed(2)} ms`;
+};
+</script>
+</body>
+</html>
