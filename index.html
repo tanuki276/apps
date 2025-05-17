@@ -69,25 +69,45 @@
   <div id="result">ここに結果が表示されます</div>
 
 <script>
-const testFileUrl = 'testfile.bin';
+const testFileUrl = 'testfile_large.bin'; // 約5MBのテストファイル
+
+async function measureDownloadSpeed(repeats = 3) {
+  const resultDiv = document.getElementById('result');
+  resultDiv.textContent = '測定中... 数回検証しています';
+
+  const speeds = [];
+
+  for(let i = 0; i < repeats; i++) {
+    try {
+      const start = performance.now();
+      const response = await fetch(testFileUrl, { cache: 'no-store' });
+      const blob = await response.blob();
+      const end = performance.now();
+
+      const duration = (end - start) / 1000; // 秒
+      const bitsLoaded = blob.size * 8;
+      const speedMbps = bitsLoaded / duration / 1_000_000;
+
+      speeds.push(speedMbps);
+      resultDiv.textContent = `測定中... ${i + 1}回目: ${speedMbps.toFixed(2)} Mbps`;
+    } catch (e) {
+      resultDiv.textContent = 'エラーが発生しました: ' + e;
+      return;
+    }
+  }
+
+  // 平均速度を計算
+  const avgSpeed = speeds.reduce((a, b) => a + b, 0) / speeds.length;
+  resultDiv.textContent = `平均速度: ${avgSpeed.toFixed(2)} Mbps`;
+}
 
 document.getElementById('downloadTest').onclick = () => {
-  const resultDiv = document.getElementById('result');
-  resultDiv.textContent = '測定中... 少々お待ちください';
-  const start = performance.now();
-  fetch(testFileUrl).then(res => res.blob()).then(blob => {
-    const end = performance.now();
-    const time = (end - start) / 1000;
-    const speedMbps = (blob.size * 8 / time) / 1_000_000;
-    resultDiv.textContent = `速度: ${speedMbps.toFixed(2)} Mbps`;
-  }).catch(e => {
-    resultDiv.textContent = 'エラーが発生しました: ' + e;
-  });
+  measureDownloadSpeed(3); // 3回測定して平均を表示
 };
 
 document.getElementById('pingTest').onclick = async () => {
   const resultDiv = document.getElementById('result');
-  resultDiv.textContent = '測定中... 少々お待ちください';
+  resultDiv.textContent = '測定中... Pingしています';
   const url = 'https://www.google.com/favicon.ico'; // 軽いファイル
   const times = [];
   for(let i=0; i<5; i++){
