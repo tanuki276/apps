@@ -64,7 +64,7 @@
 </head>
 <body>
   <h2>Wi-Fi速度テスト</h2>
-  <button id="downloadTest">ダウンロード速度測定</button>
+  <button id="downloadTest">速度測定</button>
   <button id="pingTest">Ping測定（簡易）</button>
   <div id="result">ここに結果が表示されます</div>
 
@@ -79,7 +79,7 @@ document.getElementById('downloadTest').onclick = () => {
     const end = performance.now();
     const time = (end - start) / 1000;
     const speedMbps = (blob.size * 8 / time) / 1_000_000;
-    resultDiv.textContent = `ダウンロード速度: ${speedMbps.toFixed(2)} Mbps`;
+    resultDiv.textContent = `速度: ${speedMbps.toFixed(2)} Mbps`;
   }).catch(e => {
     resultDiv.textContent = 'エラーが発生しました: ' + e;
   });
