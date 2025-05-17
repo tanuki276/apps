@@ -1,37 +1,93 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Wi-Fi速度テスト</title>
 <style>
-  body { font-family: Arial, sans-serif; padding: 20px; max-width: 400px; margin: auto; }
-  button { padding: 10px 20px; margin: 10px 0; }
-  #result { margin-top: 20px; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f4f8;
+    color: #333;
+    padding: 20px;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+  h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 24px;
+  }
+  button {
+    width: 100%;
+    padding: 14px 0;
+    margin: 12px 0;
+    border: none;
+    border-radius: 6px;
+    background-color: #3498db;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgb(52 152 219 / 0.4);
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background-color: #2980b9;
+  }
+  #result {
+    margin-top: 24px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+    font-size: 20px;
+    text-align: center;
+    min-height: 48px;
+    user-select: none;
+  }
+  @media (max-width: 480px) {
+    body {
+      padding: 12px;
+      max-width: 100%;
+    }
+    button {
+      font-size: 16px;
+      padding: 12px 0;
+    }
+    #result {
+      font-size: 18px;
+      padding: 16px;
+    }
+  }
 </style>
 </head>
 <body>
-<h2>Wi-Fi速度テスト</h2>
-<button id="downloadTest">ダウンロード速度測定</button>
-<button id="pingTest">Ping測定（簡易）</button>
-<div id="result"></div>
+  <h2>Wi-Fi速度テスト</h2>
+  <button id="downloadTest">ダウンロード速度測定</button>
+  <button id="pingTest">Ping測定（簡易）</button>
+  <div id="result">ここに結果が表示されます</div>
 
 <script>
 const testFileUrl = 'testfile.bin';
 
 document.getElementById('downloadTest').onclick = () => {
+  const resultDiv = document.getElementById('result');
+  resultDiv.textContent = '測定中... 少々お待ちください';
   const start = performance.now();
   fetch(testFileUrl).then(res => res.blob()).then(blob => {
     const end = performance.now();
     const time = (end - start) / 1000;
     const speedMbps = (blob.size * 8 / time) / 1_000_000;
-    document.getElementById('result').innerText = `ダウンロード速度: ${speedMbps.toFixed(2)} Mbps`;
+    resultDiv.textContent = `ダウンロード速度: ${speedMbps.toFixed(2)} Mbps`;
   }).catch(e => {
-    document.getElementById('result').innerText = 'エラーが発生しました: ' + e;
+    resultDiv.textContent = 'エラーが発生しました: ' + e;
   });
 };
 
 document.getElementById('pingTest').onclick = async () => {
+  const resultDiv = document.getElementById('result');
+  resultDiv.textContent = '測定中... 少々お待ちください';
   const url = 'https://www.google.com/favicon.ico'; // 軽いファイル
   const times = [];
   for(let i=0; i<5; i++){
@@ -41,12 +97,12 @@ document.getElementById('pingTest').onclick = async () => {
       const end = performance.now();
       times.push(end - start);
     }catch(e){
-      document.getElementById('result').innerText = 'Pingエラー: ' + e;
+      resultDiv.textContent = 'Pingエラー: ' + e;
       return;
     }
   }
   const avg = times.reduce((a,b)=>a+b,0)/times.length;
-  document.getElementById('result').innerText = `平均Ping応答時間: ${avg.toFixed(2)} ms`;
+  resultDiv.textContent = `平均Ping応答時間: ${avg.toFixed(2)} ms`;
 };
 </script>
 </body>
