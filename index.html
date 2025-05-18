@@ -66,6 +66,27 @@
   #toggleEnvBtn:hover {
     background-color: #27ae60;
   }
+  /* お問い合わせボタン専用スタイル */
+  #contactBtn {
+    background-color: #8e44ad;
+    color: #fff;
+    padding: 14px 0;
+    font-size: 18px;
+    font-weight: 600;
+    box-shadow: 0 4px 8px rgb(142 68 173 / 0.4);
+    margin-top: 20px;
+  }
+  #contactBtn:hover {
+    background-color: #71368a;
+  }
+  #contactResult {
+    margin-top: 12px;
+    font-size: 16px;
+    color: #8e44ad;
+    font-weight: bold;
+    word-break: break-word;
+    text-align: center;
+  }
   @media (max-width: 480px) {
     body {
       padding: 12px;
@@ -83,6 +104,13 @@
       font-size: 12px;
       padding: 12px;
     }
+    #contactBtn {
+      font-size: 16px;
+      padding: 12px 0;
+    }
+    #contactResult {
+      font-size: 14px;
+    }
   }
 </style>
 </head>
@@ -94,6 +122,10 @@
 
   <button id="toggleEnvBtn">もっと見る</button>
   <div id="envInfo"></div>
+
+  <!-- お問い合わせボタン -->
+  <button id="contactBtn">お問い合わせ</button>
+  <div id="contactResult"></div>
 
 <script>
 const testFileUrl = '25mb_file.bin';
@@ -196,6 +228,12 @@ function showEnvInfo() {
 }
 
 document.getElementById('toggleEnvBtn').onclick = showEnvInfo;
+
+// お問い合わせボタンのクリックイベント
+document.getElementById('contactBtn').addEventListener('click', () => {
+  const resultDiv = document.getElementById('contactResult');
+  resultDiv.innerHTML = '問い合わせ等はこちらから:<br><a href="https://discord.gg/vq6pqgXj" target="_blank" rel="noopener noreferrer">https://discord.gg/vq6pqgXj</a>';
+});
 </script>
 </body>
 </html>
