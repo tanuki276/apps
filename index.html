@@ -46,26 +46,24 @@
     min-height: 48px;
     user-select: none;
   }
+  #envInfo {
+    margin-top: 12px;
+    background: #e8f0fe;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #2c3e50;
+    display: none;
+    white-space: pre-wrap;
+    user-select: text;
+  }
   #toggleEnvBtn {
-    background-color: #888;
+    background-color: #2ecc71;
+    box-shadow: 0 4px 8px rgb(46 204 113 / 0.4);
+    font-size: 16px;
   }
   #toggleEnvBtn:hover {
-    background-color: #666;
-  }
-  #envInfo {
-    display: none;
-    margin-top: 12px;
-    font-size: 14px;
-    color: #555;
-    background: #fff;
-    padding: 12px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    max-width: 420px;
-    margin-left: auto;
-    margin-right: auto;
-    user-select: text;
-    white-space: pre-wrap;
+    background-color: #27ae60;
   }
   @media (max-width: 480px) {
     body {
@@ -81,8 +79,8 @@
       padding: 16px;
     }
     #envInfo {
-      font-size: 13px;
-      padding: 10px;
+      font-size: 12px;
+      padding: 12px;
     }
   }
 </style>
@@ -97,7 +95,7 @@
   <div id="envInfo"></div>
 
 <script>
-const testFileUrl = '25mb_file.bin'; // 25mbファイルのURL（適宜置き換え）
+const testFileUrl = '25mb_file.bin';
 
 async function measureDownloadSpeed(repeats = 3) {
   const resultDiv = document.getElementById('result');
@@ -112,7 +110,7 @@ async function measureDownloadSpeed(repeats = 3) {
       const blob = await response.blob();
       const end = performance.now();
 
-      const duration = (end - start) / 1000; // 秒
+      const duration = (end - start) / 1000;
       const bitsLoaded = blob.size * 8;
       const speedMbps = bitsLoaded / duration / 1_000_000;
 
@@ -124,7 +122,6 @@ async function measureDownloadSpeed(repeats = 3) {
     }
   }
 
-  // 平均速度を計算
   const avgSpeed = speeds.reduce((a, b) => a + b, 0) / speeds.length;
   resultDiv.textContent = `平均速度: ${avgSpeed.toFixed(2)} Mbps`;
 }
@@ -153,66 +150,51 @@ document.getElementById('pingTest').onclick = async () => {
   resultDiv.textContent = `平均Ping応答時間: ${avg.toFixed(2)} ms`;
 };
 
-function getBrowserInfo() {
+function getEnvInfo() {
   const ua = navigator.userAgent;
-  let browserName = '不明なブラウザ';
-  let fullVersion = '不明なバージョン';
+  let os = '不明';
+  if (/Windows NT/.test(ua)) os = 'Windows';
+  else if (/Android/.test(ua)) os = 'Android';
+  else if (/iPhone|iPad|iPod/.test(ua)) os = 'iOS';
+  else if (/Mac OS X/.test(ua)) os = 'macOS';
+  else if (/Linux/.test(ua)) os = 'Linux';
 
-  if (ua.indexOf('Firefox') > -1) {
-    browserName = 'Firefox';
-    fullVersion = ua.match(/Firefox\/([\d.]+)/)[1];
-  } else if (ua.indexOf('Chrome') > -1) {
-    browserName = 'Chrome';
-    fullVersion = ua.match(/Chrome\/([\d.]+)/)[1];
-  } else if (ua.indexOf('Safari') > -1) {
-    browserName = 'Safari';
-    fullVersion = ua.match(/Version\/([\d.]+)/)?.[1] || '不明';
-  } else if (ua.indexOf('Edge') > -1) {
-    browserName = 'Edge';
-    fullVersion = ua.match(/Edge\/([\d.]+)/)[1];
-  } else if (ua.indexOf('Trident') > -1) {
-    browserName = 'Internet Explorer';
-    fullVersion = ua.match(/rv:([\d.]+)/)[1];
+  let browser = '不明';
+  let version = '不明';
+
+  if (/Chrome\/([0-9\.]+)/.test(ua)) {
+    browser = 'Chrome';
+    version = ua.match(/Chrome\/([0-9\.]+)/)[1];
+  } else if (/Firefox\/([0-9\.]+)/.test(ua)) {
+    browser = 'Firefox';
+    version = ua.match(/Firefox\/([0-9\.]+)/)[1];
+  } else if (/Safari\/([0-9\.]+)/.test(ua) && !/Chrome/.test(ua)) {
+    browser = 'Safari';
+    version = ua.match(/Version\/([0-9\.]+)/)?.[1] || '不明';
   }
 
-  return { browserName, fullVersion, userAgent: ua };
+  return { os, browser, version, ua };
 }
 
-function getOS() {
-  const platform = navigator.platform.toLowerCase();
-  if (platform.indexOf('win') !== -1) return 'Windows';
-  if (platform.indexOf('mac') !== -1) return 'Mac OS';
-  if (platform.indexOf('linux') !== -1) return 'Linux';
-  if (/iphone|ipad|ipod/.test(platform)) return 'iOS';
-  if (/android/.test(navigator.userAgent.toLowerCase())) return 'Android';
-  return '不明なOS';
-}
-
-function buildEnvInfoHTML() {
-  const browserInfo = getBrowserInfo();
-  const os = getOS();
-
-  return `
-環境情報:
-OS: ${os}
-ブラウザ: ${browserInfo.browserName} (バージョン: ${browserInfo.fullVersion})
-ユーザーエージェント: ${browserInfo.userAgent}
-  `;
-}
-
-const toggleBtn = document.getElementById('toggleEnvBtn');
-const envDiv = document.getElementById('envInfo');
-
-toggleBtn.addEventListener('click', () => {
-  if (envDiv.style.display === 'none' || envDiv.style.display === '') {
-    envDiv.textContent = buildEnvInfoHTML();
-    envDiv.style.display = 'block';
-    toggleBtn.textContent = '閉じる';
+function showEnvInfo() {
+  const infoDiv = document.getElementById('envInfo');
+  if (infoDiv.style.display === 'none' || infoDiv.style.display === '') {
+    const info = getEnvInfo();
+    infoDiv.innerHTML = `
+      <strong>環境情報:</strong><br>
+      OS: ${info.os}<br>
+      ブラウザ: ${info.browser} (バージョン: ${info.version})<br>
+      ユーザーエージェント: ${info.ua}
+    `;
+    infoDiv.style.display = 'block';
+    document.getElementById('toggleEnvBtn').textContent = '閉じる';
   } else {
-    envDiv.style.display = 'none';
-    toggleBtn.textContent = 'もっと見る';
+    infoDiv.style.display = 'none';
+    document.getElementById('toggleEnvBtn').textContent = 'もっと見る';
   }
-});
+}
+
+document.getElementById('toggleEnvBtn').onclick = showEnvInfo;
 </script>
 </body>
 </html>
