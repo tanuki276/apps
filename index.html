@@ -111,8 +111,8 @@
 </head>
 <body>
   <h2>Wi-Fi速度テスト</h2>
-  <button id="downloadTest">速度測定</button>
-  <button id="pingTest">Ping測定（現在利用不可）</button>
+  <button id="downloadTest">速度測定（おすすめ）</button>
+  <button id="pingTest">速度測定</button>
   <div id="result">ここに結果が表示されます</div>
 
   <button id="toggleEnvBtn">もっと見る</button>
@@ -159,8 +159,8 @@ document.getElementById('downloadTest').onclick = () => {
 
 document.getElementById('pingTest').onclick = async () => {
   const resultDiv = document.getElementById('result');
-  resultDiv.textContent = '測定中... Pingしています';
-  const url = 'https://www.google.com/favicon.ico';
+  resultDiv.textContent = '測定中... ';
+  const url = 'test.jpg';
   const times = [];
   for(let i=0; i<5; i++){
     const start = performance.now();
