@@ -36,7 +36,7 @@
   button:hover {
     background-color: #2980b9;
   }
-  #result, #contactResult {
+  #result {
     margin-top: 24px;
     background: white;
     padding: 20px;
@@ -66,6 +66,26 @@
   #toggleEnvBtn:hover {
     background-color: #27ae60;
   }
+  /* お問い合わせボタン 紫 */
+  #contactBtn {
+    background-color: #8e44ad;
+    box-shadow: 0 4px 8px rgb(142 68 173 / 0.4);
+    margin: 12px 0;
+  }
+  #contactBtn:hover {
+    background-color: #732d91;
+  }
+  /* 招待リンク表示部分 */
+  #contactResult {
+    margin-top: 16px;
+    font-size: 18px;
+    color: #8e44ad;
+    background: none;
+    box-shadow: none;
+    padding: 0;
+    text-align: center;
+    user-select: text;
+  }
   @media (max-width: 480px) {
     body {
       padding: 12px;
@@ -75,13 +95,16 @@
       font-size: 16px;
       padding: 12px 0;
     }
-    #result, #contactResult {
+    #result {
       font-size: 18px;
       padding: 16px;
     }
     #envInfo {
       font-size: 12px;
       padding: 12px;
+    }
+    #contactResult {
+      font-size: 16px;
     }
   }
 </style>
@@ -200,14 +223,19 @@ function showEnvInfo() {
 
 document.getElementById('toggleEnvBtn').onclick = showEnvInfo;
 
-document.getElementById('contactBtn').addEventListener('click', () => {
-  const resultDiv = document.getElementById('contactResult');
-  if (resultDiv.innerHTML === '') {
-    resultDiv.innerHTML = 'Discord招待リンクはこちら:<br><a href="https://discord.gg/vq6pqgXj" target="_blank" rel="noopener noreferrer">https://discord.gg/vq6pqgXj</a>';
+// お問い合わせボタンの挙動
+const contactBtn = document.getElementById('contactBtn');
+const contactResult = document.getElementById('contactResult');
+let contactVisible = false;
+
+contactBtn.onclick = () => {
+  if (!contactVisible) {
+    contactResult.innerHTML = `<a href="https://discord.gg/vq6pqgXj" target="_blank" rel="noopener noreferrer">Discord招待リンクはこちら</a>`;
   } else {
-    resultDiv.innerHTML = '';
+    contactResult.innerHTML = '';
   }
-});
+  contactVisible = !contactVisible;
+};
 </script>
 </body>
 </html>
