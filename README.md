@@ -1,8 +1,8 @@
 
-# Wi-Fi速度テストWebアプリ
+# Wi-Fi速度テスト
 
 ## 使い方
-1. https://apps-henna-zeta.vercel.app/ を開く
+1. [Wi-Fi速度テスト](https://apps-henna-zeta.vercel.app/)を開く
 2. 「速度測定」ボタンを押すと速度が表示される
 3. 「Ping測定」ボタンで簡易Pingが測定できる（利用不可）
 
