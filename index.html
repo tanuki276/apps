@@ -166,7 +166,7 @@ async function measureUploadSpeed() {
 
     const start = performance.now();
     // アップロードはPOSTで送信。送信先は自分のサーバーに設定が必要
-    const uploadResponse = await fetch('/upload-endpoint', {
+    const uploadResponse = await fetch('サーバー未実装', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/octet-stream'
