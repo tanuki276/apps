@@ -152,12 +152,12 @@ async function measureDownloadSpeed(repeats = 3) {
   }
 
   const avgSpeed = speeds.reduce((a, b) => a + b, 0) / speeds.length;
-  resultDiv.textContent = `平均ダウンロード速度: ${avgSpeed.toFixed(2)} Mbps`;
+  resultDiv.textContent = `平均速度: ${avgSpeed.toFixed(2)} Mbps`;
 }
 
 async function measureUploadSpeed() {
   const resultDiv = document.getElementById('result');
-  resultDiv.textContent = 'アップロード速度測定中...';
+  resultDiv.textContent = '速度測定中...';
 
   try {
     // ファイルをfetchしてBlobとして取得
