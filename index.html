@@ -264,17 +264,14 @@ function showEnvInfo() {
 document.getElementById('toggleEnvBtn').onclick = showEnvInfo;
 
 // お問い合わせボタンの挙動
-const contactBtn = document.getElementById('contactBtn');
-const contactResult = document.getElementById('contactResult');
-let contactVisible = false;
-
-contactBtn.onclick = () => {
-  if (!contactVisible) {
-    contactResult.innerHTML = `<a href="https://discord.gg/vq6pqgXj" target="_blank" rel="noopener noreferrer">Discord招待リンクはこちら</a>`;
-  } else {
-    contactResult.innerHTML = '';
-  }
-  contactVisible = !contactVisible;
+const contactBtn = document.getElementById('contactBtn').onclick = () => {
+  const contactResult = document.getElementById('contactResult');
+  contactResult.innerHTML = `
+    <div>
+      Discord: <a href="https://discord.gg/あなたの招待コード" target="_blank">サーバーに参加</a><br>
+      解説サイト: <a href="https://apkffmono.vercel.app/" target="_blank">apkffmono.vercel.app</a>
+    </div>
+  `;
 };
 </script>
 </body>
