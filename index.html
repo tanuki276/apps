@@ -176,7 +176,7 @@ async function measureUploadSpeed() {
     const end = performance.now();
 
     if (!uploadResponse.ok) {
-      throw new Error('エラーが発生しました: ' + uploadResponse.status);
+      throw new Error('アップロードできませんでした: ' + uploadResponse.status);
     }
 
     const duration = (end - start) / 1000;
