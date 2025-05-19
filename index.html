@@ -169,12 +169,12 @@ document.getElementById('pingTest').onclick = async () => {
       const end = performance.now();
       times.push(end - start);
     }catch(e){
-      resultDiv.textContent = 'Pingエラー: ' + e;
+      resultDiv.textContent = 'エラー: ' + e;
       return;
     }
   }
   const avg = times.reduce((a,b)=>a+b,0)/times.length;
-  resultDiv.textContent = `平均Ping応答時間: ${avg.toFixed(2)} ms`;
+  resultDiv.textContent = `平均応答時間: ${avg.toFixed(2)} ms`;
 };
 
 function getEnvInfo() {
