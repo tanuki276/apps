@@ -283,6 +283,29 @@ contactBtn.onclick = () => {
     contactResult.innerHTML = '';
   }
 };
+// 環境情報表示のトグル処理
+document.getElementById('toggleEnvBtn').onclick = showEnvInfo;
+
+// お問い合わせボタンの挙動
+const contactBtn = document.getElementById('contactBtn');
+const contactResult = document.getElementById('contactResult');
+
+contactBtn.onclick = () => {
+  if (contactResult.style.display === 'none' || contactResult.style.display === '') {
+    // 表示されていなければ表示
+    contactResult.style.display = 'block';
+    contactResult.innerHTML = `
+      <div>
+        Discord: <a href="https://discord.gg/あなたの招待コード" target="_blank" rel="noopener noreferrer">サーバーに参加</a><br>
+        解説サイト: <a href="https://apkffmono.vercel.app/" target="_blank" rel="noopener noreferrer">apkffmono.vercel.app</a>
+      </div>
+    `;
+  } else {
+    // 表示されていたら非表示に
+    contactResult.style.display = 'none';
+    contactResult.innerHTML = '';
+  }
+};
 </script>
 </body>
 </html>
