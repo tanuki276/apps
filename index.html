@@ -113,9 +113,10 @@
   <h2>Wi-Fi速度テスト</h2>
   <button id="downloadTest">　　　　　　速度測定（おすすめ）</button>
   <button id="pingTest">速度測定</button>
+  <button id="uploadTest">速度測定（New）</button>
   <div id="result">ここに結果が表示されます</div>
 
-  <button id="toggleEnvBtn">もっと見る</button>
+  <button id="toggleEnvBtn">環境情報を見る</button>
   <div id="envInfo"></div>
 
   <button id="contactBtn">お問い合わせ</button>
@@ -123,6 +124,7 @@
 
 <script>
 const testFileUrl = '25mb_file.bin';
+const uploadFileUrl = 'up.25mb.bin'; // Upload
 
 async function measureDownloadSpeed(repeats = 3) {
   const resultDiv = document.getElementById('result');
@@ -150,7 +152,41 @@ async function measureDownloadSpeed(repeats = 3) {
   }
 
   const avgSpeed = speeds.reduce((a, b) => a + b, 0) / speeds.length;
-  resultDiv.textContent = `平均速度: ${avgSpeed.toFixed(2)} Mbps`;
+  resultDiv.textContent = `平均ダウンロード速度: ${avgSpeed.toFixed(2)} Mbps`;
+}
+
+async function measureUploadSpeed() {
+  const resultDiv = document.getElementById('result');
+  resultDiv.textContent = 'アップロード速度測定中...';
+
+  try {
+    // ファイルをfetchしてBlobとして取得
+    const response = await fetch(uploadFileUrl, { cache: 'no-store' });
+    const fileBlob = await response.blob();
+
+    const start = performance.now();
+    // アップロードはPOSTで送信。送信先は自分のサーバーに設定が必要
+    const uploadResponse = await fetch('/upload-endpoint', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/octet-stream'
+      },
+      body: fileBlob
+    });
+    const end = performance.now();
+
+    if (!uploadResponse.ok) {
+      throw new Error('アップロードに失敗しました: ' + uploadResponse.status);
+    }
+
+    const duration = (end - start) / 1000;
+    const bitsUploaded = fileBlob.size * 8;
+    const speedMbps = bitsUploaded / duration / 1_000_000;
+
+    resultDiv.textContent = `アップロード速度: ${speedMbps.toFixed(2)} Mbps`;
+  } catch (e) {
+    resultDiv.textContent = 'エラーが発生しました: ' + e;
+  }
 }
 
 document.getElementById('downloadTest').onclick = () => {
@@ -175,6 +211,10 @@ document.getElementById('pingTest').onclick = async () => {
   }
   const avg = times.reduce((a,b)=>a+b,0)/times.length;
   resultDiv.textContent = `平均応答時間: ${avg.toFixed(2)} ms`;
+};
+
+document.getElementById('uploadTest').onclick = () => {
+  measureUploadSpeed();
 };
 
 function getEnvInfo() {
