@@ -1,27 +1,63 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>サイト停止中</title>
+  <meta charset="UTF-8" />
+  <title>〇〇中です</title>
   <style>
     body {
-      background-color: #f8f8f8;
-      color: #333;
-      font-family: 'Arial', sans-serif;
+      margin: 0;
+      height: 100vh;
+      background: #111;
+      color: #eee;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       text-align: center;
-      padding-top: 20%;
+      user-select: none;
     }
-    h1 {
-      font-size: 2em;
-      color: #c00;
+    .container {
+      font-size: 1.8rem;
+      line-height: 2.2rem;
     }
-    p {
-      font-size: 1.2em;
+    .status, .wait {
+      margin: 0.5em 0;
+    }
+    .time {
+      font-weight: bold;
+      font-size: 2rem;
+      margin-top: 1em;
+      letter-spacing: 0.1em;
     }
   </style>
 </head>
 <body>
-  <h1>このサイトは現在停止中です。</h1>
-  <p>ご迷惑をおかけして申し訳ありません。</p>
+  <div class="container">
+    <div class="status" id="status">現在<span id="statusText">〇〇中</span>です。</div>
+    <div class="wait">しばらくお待ち下さい。</div>
+    <div class="time">予定時間　<span id="scheduledTime">〇〇:〇〇</span></div>
+    <div class="time">現在時刻　<span id="currentTime">--:--:--</span></div>
+  </div>
+
+  <script>
+    // 変更部分
+    const statusText = "〇〇";  // 〇〇中ですの部分
+    const scheduledTime = "〇〇:〇〇";      // 時間帰るとこ
+
+    // 初期セット
+    document.getElementById('statusText').textContent = statusText + "中";
+    document.getElementById('scheduledTime').textContent = scheduledTime;
+
+    // 現在時刻をリアルタイム更新
+    function updateTime() {
+      const now = new Date();
+      const h = now.getHours().toString().padStart(2, '0');
+      const m = now.getMinutes().toString().padStart(2, '0');
+      const s = now.getSeconds().toString().padStart(2, '0');
+      document.getElementById('currentTime').textContent = `${h}:${m}:${s}`;
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+  </script>
 </body>
 </html>
