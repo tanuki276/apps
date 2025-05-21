@@ -193,7 +193,7 @@ document.getElementById('pingTest').onclick = async () => {
   resultDiv.textContent = '応答速度測定中...';
   const url = 'test.jpg'; // 任意の小さなファイル
   const times = [];
-  const numberOfPings = 5;
+  const numberOfPings = 5; // 測定回数
 
   for(let i = 0; i < numberOfPings; i++){
     const start = performance.now();
@@ -210,12 +210,7 @@ document.getElementById('pingTest').onclick = async () => {
 
   const avg = times.reduce((a, b) => a + b, 0) / times.length;
 
-  // 日本サーバーの平均応答時間（例：25ms）
-  const japanAvg = 25; // この値は環境によって調整してください
-
-  // 海外サーバー応答時間 ÷ 日本サーバー平均応答時間 (この計算はpingの時間と直接関係ありませんが、参考に残します)
-  // const ratio = avg / japanAvg;
-
+  // 平均応答時間をそのまま表示
   resultDiv.textContent = `平均応答時間: ${avg.toFixed(2)} ms`;
 };
 
