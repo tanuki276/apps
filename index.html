@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Wi-Fi速度テスト</title>
   <link rel="icon" href="/favicon.jpg" type="image/jpeg">
-  
-  <!-- Google tag (gtag.js) -->
+
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-LC3BFDCLC8"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -94,6 +93,7 @@
     padding: 0;
     text-align: center;
     user-select: text;
+    display: none; /* 初期状態で非表示 */
   }
   @media (max-width: 480px) {
     body {
@@ -120,9 +120,9 @@
 </head>
 <body>
   <h2>Wi-Fi速度テスト</h2>
-  <button id="downloadTest">　　　　　　速度測定（おすすめ）</button>
-  <button id="pingTest">速度測定</button>
-  <button id="uploadTest">　　　　　　速度測定（実装中）</button>
+  <button id="downloadTest">速度測定（おすすめ）</button>
+  <button id="pingTest">応答速度測定</button>
+  <button id="uploadTest">速度測定（実装中）</button>
   <div id="result">ここに結果が表示されます</div>
 
   <button id="toggleEnvBtn">環境情報を見る</button>
@@ -163,38 +163,22 @@ async function measureDownloadSpeed(repeats = 3) {
   }
 
   const avgSpeed = speeds.reduce((a, b) => a + b, 0) / speeds.length;
-  resultDiv.textContent = `平均速度: ${avgSpeed.toFixed(2)} Mbps`;
+  resultDiv.textContent = `平均ダウンロード速度: ${avgSpeed.toFixed(2)} Mbps`;
 }
 
 async function measureUploadSpeed() {
   const resultDiv = document.getElementById('result');
-  resultDiv.textContent = '速度測定中...';
+  resultDiv.textContent = 'アップロード速度測定中...';
 
   try {
-    // ファイルをfetchしてBlobとして取得
-    const response = await fetch(uploadFileUrl, { cache: 'no-store' });
-    const fileBlob = await response.blob();
-
-    const start = performance.now();
-    // アップロードはPOSTで送信。送信先は自分のサーバーに設定が必要
-    const uploadResponse = await fetch('サーバー未実装', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/octet-stream'
-      },
-      body: fileBlob
-    });
-    const end = performance.now();
-
-    if (!uploadResponse.ok) {
-      throw new Error('アップロードできませんでした: ' + uploadResponse.status);
-    }
-
-    const duration = (end - start) / 1000;
-    const bitsUploaded = fileBlob.size * 8;
-    const speedMbps = bitsUploaded / duration / 1_000_000;
-
-    resultDiv.textContent = `アップロード速度: ${speedMbps.toFixed(2)} Mbps`;
+    // アップロード機能は現在未実装です。サーバー側のエンドポイントが必要です。
+    // fetch関数はダミーです。
+    // 実際には以下のようにPOSTリクエストでファイルを送信します。
+    // const response = await fetch('/your-upload-endpoint', {
+    //   method: 'POST',
+    //   body: fileBlob
+    // });
+    resultDiv.textContent = 'アップロード機能は現在開発中です。';
   } catch (e) {
     resultDiv.textContent = 'エラーが発生しました: ' + e;
   }
@@ -206,46 +190,35 @@ document.getElementById('downloadTest').onclick = () => {
 
 document.getElementById('pingTest').onclick = async () => {
   const resultDiv = document.getElementById('result');
-  resultDiv.textContent = '測定中... ';
-  const url = 'test.jpg';
+  resultDiv.textContent = '応答速度測定中...';
+  const url = 'test.jpg'; // 任意の小さなファイル
   const times = [];
-  for(let i=0; i<5; i++){
-    const start = performance.now();
-    try{
-      await fetch(url, {cache: 'no-store'});
-      const end = performance.now();
-      times.push(end - start);
-    }catch(e){
-      resultDiv.textContent = 'エラー: ' + e;
-      return;
-    }
-  }
-  document.getElementById('pingTest').onclick = async () => {
-  const resultDiv = document.getElementById('result');
-  resultDiv.textContent = '測定中... ';
-  const url = 'test.jpg';
-  const times = [];
-  for(let i=0; i<5; i++){
-    const start = performance.now();
-    try{
-      await fetch(url, {cache: 'no-store'});
-      const end = performance.now();
-      times.push(end - start);
-    }catch(e){
-      resultDiv.textContent = 'エラー: ' + e;
-      return;
-    }
-  }
-  const avg = times.reduce((a,b)=>a+b,0)/times.length;
-  
-  // 日本サーバーの平均応答時間（例：300ms）
-  const japanAvg = 25;
+  const numberOfPings = 5;
 
-  // 海外サーバー応答時間 ÷ 日本サーバー平均応答時間
-  const ratio = avg / japanAvg;
+  for(let i = 0; i < numberOfPings; i++){
+    const start = performance.now();
+    try {
+      // キャッシュを使わずに常にサーバーから取得する
+      await fetch(url, { cache: 'no-store' });
+      const end = performance.now();
+      times.push(end - start);
+    } catch(e) {
+      resultDiv.textContent = 'エラー: ' + e;
+      return;
+    }
+  }
+
+  const avg = times.reduce((a, b) => a + b, 0) / times.length;
+
+  // 日本サーバーの平均応答時間（例：25ms）
+  const japanAvg = 25; // この値は環境によって調整してください
+
+  // 海外サーバー応答時間 ÷ 日本サーバー平均応答時間 (この計算はpingの時間と直接関係ありませんが、参考に残します)
+  // const ratio = avg / japanAvg;
 
   resultDiv.textContent = `平均応答時間: ${avg.toFixed(2)} ms`;
 };
+
 
 document.getElementById('uploadTest').onclick = () => {
   measureUploadSpeed();
@@ -272,13 +245,19 @@ function getEnvInfo() {
   } else if (/Safari\/([0-9\.]+)/.test(ua) && !/Chrome/.test(ua)) {
     browser = 'Safari';
     version = ua.match(/Version\/([0-9\.]+)/)?.[1] || '不明';
+  } else if (/Edg\/([0-9\.]+)/.test(ua)) { // Edgeブラウザの検出を追加
+    browser = 'Edge';
+    version = ua.match(/Edg\/([0-9\.]+)/)[1];
   }
+
 
   return { os, browser, version, ua };
 }
 
 function showEnvInfo() {
   const infoDiv = document.getElementById('envInfo');
+  const toggleBtn = document.getElementById('toggleEnvBtn');
+
   if (infoDiv.style.display === 'none' || infoDiv.style.display === '') {
     const info = getEnvInfo();
     infoDiv.innerHTML = `
@@ -288,10 +267,10 @@ function showEnvInfo() {
       ユーザーエージェント: ${info.ua}
     `;
     infoDiv.style.display = 'block';
-    document.getElementById('toggleEnvBtn').textContent = '閉じる';
+    toggleBtn.textContent = '閉じる';
   } else {
     infoDiv.style.display = 'none';
-    document.getElementById('toggleEnvBtn').textContent = 'もっと見る';
+    toggleBtn.textContent = '環境情報を見る';
   }
 }
 
@@ -302,7 +281,7 @@ const contactBtn = document.getElementById('contactBtn');
 const contactResult = document.getElementById('contactResult');
 
 contactBtn.onclick = () => {
-  if (contactResult.style.display === 'none' || contactResult.style.display === '') {
+  if (contactResult.style.display === 'none') {
     // 表示されていなければ表示
     contactResult.style.display = 'block';
     contactResult.innerHTML = `
@@ -311,10 +290,12 @@ contactBtn.onclick = () => {
         解説サイト: <a href="https://apkffmono.vercel.app/" target="_blank">apkffmono.vercel.app</a>
       </div>
     `;
+    contactBtn.textContent = '閉じる';
   } else {
     // 表示されていたら非表示に
     contactResult.style.display = 'none';
     contactResult.innerHTML = '';
+    contactBtn.textContent = 'お問い合わせ';
   }
 };
 </script>
